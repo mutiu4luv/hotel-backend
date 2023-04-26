@@ -1,21 +1,19 @@
-const express = require ('express')
-require("dotenv").config()
-const colors= require('colors')
-const cors=require('cors')
-const mongoose =require( "mongoose")
+const express = require("express");
+require("dotenv").config();
+const colors = require("colors");
+const cors = require("cors");
+const mongoose = require("mongoose");
 // const dbconfig = require("./db")
-const roomsRoute = require("./routes/roomsRoute")
-
-
-
+const roomsRoute = require("./routes/roomsRoute");
+const userRoute = require("./routes/userRoute");
 
 const app = express();
 app.use(cors());
 
+app.use(express.json());
 
-app.use("/api/rooms" , roomsRoute )
-
-
+app.use("/api/rooms", roomsRoute);
+app.use("/api/users", userRoute);
 
 // mongoose.connect((process.env.MONGO_URL ), {
 //   useNewUrlParser: true,
@@ -28,15 +26,12 @@ app.use("/api/rooms" , roomsRoute )
 //   console.error('Failed to connect to MongoDB:', err);
 // });
 
-
-
 mongoose
-  .connect(process.env.MONGO_URL  )
+  .connect(process.env.MONGO_URL)
   .then(() => console.log("DB connected"))
-  .catch((err) => console.log("DB not connected"))
-
+  .catch((err) => console.log("DB not connected"));
 
 // app.listen(5000, console.log(`server running in port 5000`.yellow))
-const port = process.env.PORT || 5000
+const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`node started with nodemon`))
+app.listen(port, () => console.log(`node started with nodemon`));

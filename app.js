@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 // const dbconfig = require("./db")
 const roomsRoute = require("./routes/roomsRoute");
 const userRoute = require("./routes/userRoute");
+const bookingRoute = require("./routes/bookingRoutes");
 
 const app = express();
 app.use(cors());
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use("/api/rooms", roomsRoute);
 app.use("/api/users", userRoute);
+app.use("/api/bookings", bookingRoute);
 
 // mongoose.connect((process.env.MONGO_URL ), {
 //   useNewUrlParser: true,

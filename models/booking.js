@@ -14,7 +14,8 @@ const bookingSchema = mongoose.Schema(
     totalamount: { type: Number, required: true },
     totaldays: { type: Number, required: true },
     transaction: { type: String, required: true },
-    // status: { type: String, required: true, default: "booked" },
+    isCancelled: { type: Boolean, default: false },
+    status: { type: String, default: "booked" },
   },
   {
     timestamps: true,

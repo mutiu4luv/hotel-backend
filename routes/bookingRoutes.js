@@ -7,6 +7,7 @@ const stripe = require("stripe")(
   "sk_test_51MqCXcAZTcl4qbBLWd9qJvnF9crkZ2aPqmB4AdXYSA6IgYTbNIUIprwCHKKvAfbkerFPJqnABVNWqYjTWIPZ5g0L008WCLBcqK"
 );
 const Booking = require("../models/booking");
+const { Router } = require("express");
 
 //// book room end point
 
@@ -68,6 +69,50 @@ router.post("/bookroom", async (req, res) => {
     res.send("payment successful, your room is booked");
   } catch (error) {
     return res.status(400).json({ message: "error" });
+  }
+});
+
+router.get("/getbookingbyuserid", async (req, res) => {
+  // const userid = req.body.userid;
+
+  try {
+    const bookings = await Booking.find({});
+    res.send({ bookings });
+  } catch (error) {
+    return res.status(400).json({ message: "error" });
+  }
+});
+// update
+
+router.put("/updateiscancelled", async (req, res) => {
+  try {
+    const updatedisCancelled = await Booking.findOneAndUpdate({
+      $set: { isCancelled: true },
+    });
+
+    res.status(200).json(updatedisCancelled);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update isCancelled" });
+  }
+});
+
+/// UPDATE IS CANCELLED
+
+router.post("/iscancelled", async (req, res) => {
+  const { bookingid, roomid } = req.body;
+  try {
+    const bookingitem = await Booking.findByOne({ _id: bookingid });
+    bookingitem.status = "cancelled";
+    await bookingitem.save();
+    const room = await Room.findByOne({ _id: roomid });
+    const bookings = room.currentbookings;
+    const temp = bookings.filter(
+      (booking) => booking.bookingid.toString() !== bookingid
+    );
+    room.currentbookings = temp;
+    await room.save();
+  } catch (error) {
+    res.status(500).json({ error });
   }
 });
 

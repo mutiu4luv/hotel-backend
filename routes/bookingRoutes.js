@@ -73,7 +73,7 @@ router.post("/bookroom", async (req, res) => {
 });
 
 router.get("/getbookingbyuserid", async (req, res) => {
-  // const userid = req.body.userid;
+  // const userId = req.params.id;
 
   try {
     const bookings = await Booking.find({});
@@ -113,6 +113,30 @@ router.post("/iscancelled", async (req, res) => {
     await room.save();
   } catch (error) {
     res.status(500).json({ error });
+  }
+});
+
+router.get("/getbookings", async (req, res) => {
+  // const userid = req.body.userid;
+
+  try {
+    const bookings = await Booking.find({});
+    res.send({ bookings });
+  } catch (error) {
+    return res.status(400).json({ message: "error" });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const deletePost = await deletePost.findById(req.params.id);
+
+    if (deletePost) {
+      await deletePost.remove();
+      res.json({ message: "Booking has been deleted" });
+    }
+  } catch (error) {
+    res.status(500).json(error);
   }
 });
 

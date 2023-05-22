@@ -72,4 +72,38 @@ router.post(
   }
 );
 
+router.post("/addrooms", async (req, res) => {
+  try {
+    const newroom = new Room(req.body);
+    await newroom.save();
+    res.send("new room added successfully");
+  } catch (error) {
+    return res.status(400).json({ message: error });
+  }
+});
+
+router.delete("/delete/:id", async (req, res) => {
+  try {
+    const deleteRoom = await Room.findById(req.params.id);
+
+    if (deleteRoom) {
+      await deleteRoom.delete();
+      res.json({ message: "Room has been deleted" });
+    }
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+router.delete("/deletes/:id", async (req, res) => {
+  try {
+    const room = await Room.findByIdAndDelete(req.params.id);
+    if (room) {
+      await room.remove();
+      res.status(200).json({ message: "Music File has been deleted" });
+    }
+  } catch (error) {
+    res.status(500).json("cannot delete");
+  }
+});
+
 module.exports = router;

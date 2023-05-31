@@ -3,9 +3,7 @@ const { v4: uuidv4 } = require("uuid");
 const router = express.Router();
 const Room = require("../models/room");
 const moment = require("moment");
-const stripe = require("stripe")(
-  "sk_test_51MqCXcAZTcl4qbBLWd9qJvnF9crkZ2aPqmB4AdXYSA6IgYTbNIUIprwCHKKvAfbkerFPJqnABVNWqYjTWIPZ5g0L008WCLBcqK"
-);
+const stripe = require("stripe")(process.env.stripe);
 const Booking = require("../models/booking");
 const { Router } = require("express");
 
@@ -127,16 +125,45 @@ router.get("/getbookings", async (req, res) => {
   }
 });
 
-router.delete("/delete/:id", async (req, res) => {
+router.post("/bookrooms", async (req, res) => {
+  const { room, userid, fromdate, todate, totalamount, totaldays, token } =
+    req.body;
   try {
-    const deletePost = await deletePost.findById(req.params.id);
+    const newbooking = new Booking({
+      room: room.name,
+      roomid: room._id,
+      userid,
+      fromdate,
+      todate,
+      totalamount,
+      token,
+      totaldays,
+      transaction: "1234",
+    });
+    const booking = await newbooking.save();
 
-    if (deletePost) {
-      await deletePost.remove();
-      res.json({ message: "Booking has been deleted" });
-    }
+    const roomtemp = await Room.findOne({ _id: room._id });
+    roomtemp.currentbookings.push({
+      bookingid: booking._id,
+      fromdate: fromdate,
+      todate: todate,
+      userid: userid,
+      status: booking.status,
+    });
+    await roomtemp.save();
+    res.send("room booked successfully");
   } catch (error) {
     res.status(500).json(error);
+  }
+});
+
+router.delete("/deletes/:id", async (req, res) => {
+  try {
+    const room = await Booking.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ message: "BOOKING has been deleted" });
+  } catch (error) {
+    res.status(500).json("cannot delete booking");
   }
 });
 

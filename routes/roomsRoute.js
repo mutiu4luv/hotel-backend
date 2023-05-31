@@ -97,10 +97,8 @@ router.delete("/delete/:id", async (req, res) => {
 router.delete("/deletes/:id", async (req, res) => {
   try {
     const room = await Room.findByIdAndDelete(req.params.id);
-    if (room) {
-      await room.remove();
-      res.status(200).json({ message: "Music File has been deleted" });
-    }
+
+    res.status(200).json({ message: "Room has been deleted" });
   } catch (error) {
     res.status(500).json("cannot delete");
   }

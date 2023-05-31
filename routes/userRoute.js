@@ -45,4 +45,14 @@ router.get("/getallusers", async (req, res) => {
   }
 });
 
+router.delete("/deletes/:id", async (req, res) => {
+  try {
+    const room = await User.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ message: "USER has been deleted" });
+  } catch (error) {
+    res.status(500).json("cannot delete user");
+  }
+});
+
 module.exports = router;

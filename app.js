@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 const roomsRoute = require("./routes/roomsRoute");
 const userRoute = require("./routes/userRoute");
 const bookingRoute = require("./routes/bookingRoutes");
+const path = require("path");
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,10 @@ app.use(express.json());
 app.use("/api/rooms", roomsRoute);
 app.use("/api/users", userRoute);
 app.use("/api/bookings", bookingRoute);
+app.use(express.static(path.join(__dirname, "/build")));
+app.get("*", (req, res) =>
+  res.sendFile(path.join(__dirname, "build/index.html"))
+);
 
 // mongoose.connect((process.env.MONGO_URL ), {
 //   useNewUrlParser: true,
@@ -35,5 +40,3 @@ mongoose
 
 // app.listen(5000, console.log(`server running in port 5000`.yellow))
 const port = process.env.PORT || 5000;
-
-app.listen(port, () => console.log(`node started with nodemon`));
